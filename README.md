@@ -6,6 +6,7 @@ _Makeup_ is a static site generator / transformer that runs completely on client
 That means there is no "build" step required before you deploy your
 website files. And of course there is nothing to be installed.
 
+http://schettino72.github.com/makeup
 
 Features
 -----------
@@ -13,6 +14,7 @@ Features
 * no "build" step
 * convert markdown to HTML (can be extended to support other formats)
 * multiple content source files in a single page
+
 
 
 Drawbacks
@@ -27,6 +29,9 @@ Drawbacks
 
 How to use it
 ---------------
+
+For a sample check a _makeup_ website <http://schettino72.github.com/makeup> source
+<https://github.com/schettino72/makeup/tree/gh-pages>
 
 Makeup is based on the idea that the pages in your website are divided in
 **sections**. Each page contains one or more section, and each section

@@ -6,7 +6,7 @@ _Makeup_ is a static site generator / transformer that runs completely on client
 That means there is no "build" step required before you deploy your
 website files. And of course there is nothing to be installed.
 
-http://schettino72.github.com/makeup
+<https://github.com/schettino72/makeup>
 
 Features
 -----------

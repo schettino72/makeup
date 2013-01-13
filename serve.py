@@ -3,6 +3,8 @@ import BaseHTTPServer
 import SimpleHTTPServer
 
 
+BASE_PATH = os.getcwd()
+
 class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     """serve index.html page instead of 404 for unknown locations"""
     def send_head(self):
@@ -12,8 +14,8 @@ class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         """
         path = self.translate_path(self.path)
 
-        if not os.path.exists(path):
-            path = os.path.join(os.path.dirname(path), 'index.html')
+        if (not os.path.exists(path)) or path == BASE_PATH:
+            path = 'index.html'
 
         ctype = self.guess_type(path)
 
@@ -23,8 +25,8 @@ class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             # newline translations, making the actual size of the content
             # transmitted *less* than the content-length!
             f = open(path, 'rb')
-        except IOError:
-            self.send_error(404, "File not found")
+        except IOError as ex:
+            self.send_error(404, "File not found" + str(ex))
             return None
         self.send_response(200)
         self.send_header("Content-type", ctype)

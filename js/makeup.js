@@ -20,11 +20,10 @@ function Makeup (content_id, pages){
     }
 
     // bind events
-	//$(window).bind('hashchange', $.proxy(this.hash_changed, this));
-    //this.hash_changed();
     $('body').on('click', 'a', $.proxy(this.handle_click, this));
+    $(window).bind('popstate', $.proxy(this.pop_stage, this));
 
-    this.set_page(location.pathname);
+    this.set_page(location.pathname, false);
 }
 
 // processors that convert raw content into HTML
@@ -57,13 +56,18 @@ Makeup.prototype.handle_click = function(event) {
     if (link.href === location.href + '#')
         return;
 
-    this.set_page(link.pathname);
+    this.set_page(link.pathname, true);
 
     event.preventDefault();
 };
 
 
-Makeup.prototype.set_page = function(path){
+Makeup.prototype.pop_stage = function(event) {
+    this.set_page(document.location.pathname, false);
+};
+
+
+Makeup.prototype.set_page = function(path, push_state){
     // change location
     var page = this.pages[path];
     if (page === undefined){ // page not found
@@ -75,8 +79,12 @@ Makeup.prototype.set_page = function(path){
         // page not found - redirect to root
         page = this.pages['__404__'];
     }
-    document.title = page.title;
+
     page.load();
+    document.title = page.title;
+    if (push_state){
+        window.history.pushState({}, page.title, path);
+    }
 };
 
 
@@ -126,10 +134,20 @@ Section.prototype.load_cb = function(data){
     if (this.processor){
         data = this.processor(data);
     }
-    // 2 - insert into page
+
+    // insert into page
     this.$ele.html(data);
-    // 3 - load child elements
+
+    // load child elements
     $.each(this.child, function(_, child){
         child.load();
     });
+
+    // Scroll to top
+    $(window).scrollTop(0)
+
+    // Google Analytics support
+    if (window._gaq){
+        _gaq.push(['_trackPageview']);
+    }
 };

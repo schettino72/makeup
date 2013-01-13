@@ -32,7 +32,10 @@
 
   <script type="text/javascript">
     $.getJSON("pages.json", function(data){
-      new Makeup('main', data);
+        $('nav a').each(function(_, link){
+            link.pathname = data.baseurl + link.pathname;
+        });
+        new Makeup('main', data.baseurl, data.pages);
     });
   </script>
 </body>

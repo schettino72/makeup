@@ -4,9 +4,11 @@
  */
 
 
-function Makeup (content_id, pages){
+function Makeup (content_id, baseurl, pages){
     // @param content_id: (str) id of HTML element on template
     // @param pages: (dict) page config info
+
+    this.baseurl = baseurl;
 
     var sections = {};
     $.each(pages, function(k,v){
@@ -58,6 +60,7 @@ Makeup.prototype.handle_click = function(event) {
     if (link.href === location.href + '#')
         return;
 
+    // FIXME check pathname is in this.baseurl
     this.set_page(link.pathname, true);
 
     event.preventDefault();
@@ -70,12 +73,14 @@ Makeup.prototype.popstate = function(event) {
 
 
 Makeup.prototype.set_page = function(path, push_state){
+    var route_path = path.substr(this.baseurl.length);
+
     // change location
-    var page = this.pages[path];
+    var page = this.pages[route_path];
     if (page === undefined){ // page not found
         // if no 404 (page not found) specified redirect to root
         if (this.pages['__404__'] == undefined){
-            this.set_page('/');
+            this.set_page(this.baseurl + '/');
             return
         }
         // page not found - redirect to root
@@ -124,7 +129,7 @@ function Section(opts, position){
 Section.prototype.load = function(){
     this.$ele = $('#' + this.pos);
     $.ajax({
-        url: this.src,
+        url: "/" + this.src,
         context: this,
         success: this.load_cb,
         error: function(){console.log('oops');}

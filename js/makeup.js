@@ -8,7 +8,7 @@ function Makeup (content_id, baseurl, pages){
     // @param content_id: (str) id of HTML element on template
     // @param pages: (dict) page config info
 
-    this.baseurl = baseurl;
+    Makeup.baseurl = baseurl;
 
     var sections = {};
     $.each(pages, function(k,v){
@@ -73,14 +73,14 @@ Makeup.prototype.popstate = function(event) {
 
 
 Makeup.prototype.set_page = function(path, push_state){
-    var route_path = path.substr(this.baseurl.length + 1);
+    var route_path = path.substr(Makeup.baseurl.length + 1);
 
     // change location
     var page = this.pages[route_path];
     if (page === undefined){ // page not found
         // if no 404 (page not found) specified redirect to root
         if (this.pages['__404__'] == undefined){
-            this.set_page(this.baseurl);
+            this.set_page(Makeup.baseurl + '/');
             return
         }
         // page not found - redirect to root
@@ -129,7 +129,7 @@ function Section(opts, position){
 Section.prototype.load = function(){
     this.$ele = $('#' + this.pos);
     $.ajax({
-        url: this.src,
+        url: Makeup.baseurl + '/' + this.src,
         context: this,
         success: this.load_cb,
         error: function(){console.log('oops');}

@@ -20,8 +20,8 @@
 <body>
   <nav>
     <a href="/">home/doc</a>
-    <a href="/page2">sample page</a>
-    <a href="/i_dont_exist">wrong link(to test 404 page)</a>
+    <a href="page2">sample page</a>
+    <a href="i_dont_exist">wrong link(to test 404 page)</a>
   </nav>
   <div id="main"></div>
 
@@ -32,9 +32,9 @@
 
   <script type="text/javascript">
     $.getJSON("pages.json", function(data){
-        $('nav a').each(function(_, link){
-            link.pathname = data.baseurl + link.pathname;
-        });
+        //$('nav a').each(function(_, link){
+        //    link.pathname = data.baseurl + link.pathname;
+        //});
         new Makeup('main', data.baseurl, data.pages);
     });
   </script>

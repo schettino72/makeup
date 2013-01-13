@@ -17,8 +17,8 @@ function Makeup (content_id, baseurl, pages){
     this.pages = sections;
 
     // sanity check
-    if (this.pages['/'] === undefined){
-        throw Error('Must include root "/" page');
+    if (this.pages[''] === undefined){
+        throw Error('Must include root "" page');
     }
 
     // bind events
@@ -73,14 +73,14 @@ Makeup.prototype.popstate = function(event) {
 
 
 Makeup.prototype.set_page = function(path, push_state){
-    var route_path = path.substr(this.baseurl.length);
+    var route_path = path.substr(this.baseurl.length + 1);
 
     // change location
     var page = this.pages[route_path];
     if (page === undefined){ // page not found
         // if no 404 (page not found) specified redirect to root
         if (this.pages['__404__'] == undefined){
-            this.set_page(this.baseurl + '/');
+            this.set_page(this.baseurl);
             return
         }
         // page not found - redirect to root

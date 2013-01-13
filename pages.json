@@ -1,7 +1,7 @@
 {
     "baseurl": "/makeup",
     "pages": {
-        "/": {"title": "makeup", "src": "/README.md"},
+        "/": {"title": "makeup", "src": "README.md"},
         "/page2": {"title": "makeup - page2", "src": "page2.html",
                    "child": ["part1.md", "part2.md"]},
         "__404__": {"title": "not found", "src": "404.html"}

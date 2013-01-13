@@ -129,7 +129,7 @@ function Section(opts, position){
 Section.prototype.load = function(){
     this.$ele = $('#' + this.pos);
     $.ajax({
-        url: "/" + this.src,
+        url: this.src,
         context: this,
         success: this.load_cb,
         error: function(){console.log('oops');}

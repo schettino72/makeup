@@ -26,16 +26,13 @@
   <div id="main"></div>
 
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-  <script src="https://raw.github.com/evilstreak/markdown-js/master/lib/markdown.js" ></script>
-  <script src="https://raw.github.com/schettino72/makeup/master/makeup.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/markdown.js" ></script>
+  <script src="js/makeup.js"></script>
+
   <script type="text/javascript">
-    $(function(){
-      new Makeup('main', {
-         '/': {title:'makeup', src:'README.md'},
-         '/page2': {title:'makeup - page2', src:'page2.html', child:['part1.md', 'part2.md']},
-         '__404__': {title:'not found', src:'404.html'}
-      });
+    $.getJSON("pages.json", function(data){
+      new Makeup('main', data);
     });
   </script>
 </body>

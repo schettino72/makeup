@@ -1,4 +1,4 @@
-/* Makekup - client-side static site generator / transformer
+/* Makeup - client-side static site generator / transformer
  * https://github.com/schettino72/makeup
  * MIT License
  */
@@ -21,10 +21,12 @@ function Makeup (content_id, pages){
 
     // bind events
     $('body').on('click', 'a', $.proxy(this.handle_click, this));
-    $(window).bind('popstate', $.proxy(this.pop_stage, this));
+    $(window).bind('popstate', $.proxy(this.popstate, this));
 
+    // go to initial page
     this.set_page(location.pathname, false);
 }
+
 
 // processors that convert raw content into HTML
 Makeup.PROCESSOR_MAP = {
@@ -62,7 +64,7 @@ Makeup.prototype.handle_click = function(event) {
 };
 
 
-Makeup.prototype.pop_stage = function(event) {
+Makeup.prototype.popstate = function(event) {
     this.set_page(document.location.pathname, false);
 };
 
@@ -118,6 +120,7 @@ function Section(opts, position){
     }
 }
 
+
 Section.prototype.load = function(){
     this.$ele = $('#' + this.pos);
     $.ajax({
@@ -128,9 +131,10 @@ Section.prototype.load = function(){
     });
 };
 
+
 Section.prototype.load_cb = function(data){
     // load content callback
-    // 1 - process/convert raw data
+    // process/convert raw data
     if (this.processor){
         data = this.processor(data);
     }

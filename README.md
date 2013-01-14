@@ -1,37 +1,176 @@
 Makeup
 ===========
 
-_Makeup_ is a static site generator / transformer that runs completely on client side.
+_Makeup_ is a static site generator / transformer that (may) run completely on client side.
 
 That means there is no "build" step required before you deploy your
 website files. And of course there is nothing to be installed.
 
-<https://github.com/schettino72/makeup>
+Goals
+------------
 
-Features
+* better than static HTML
+    - use "HTML template" page for common content shared by pages
+    - write content in markdown
+
+* better than conventional static site generators
+    - minimal setup, no installation (easy for non-techinical people)
+    - easy to use, no template language required just plain HTML is enough
+    - [TODO] optional use of templates
+    - [TODO] optional offline content generation
+
+* better than dynamic sites
+    - faster (use static files)
+    - edit content offline
+    - [TODO] optional web UI to edit content
+
+
+How it works
+---------------
+
+### HTML template
+
+Create a basic HTML "template" file where you must include
+[jquery.js](http://jquery.com/),
+[markdown.js](https://github.com/evilstreak/markdown-js) and `makeup.js`
+
+     <script src="/js/jquery.min.js"></script>
+     <script src="/js/markdown.js" ></script>
+     <script src="/js/makeup.js"></script>
+
+
+Add an element to be the placeholder for the content:
+
+     <div id="main"></div>
+
+Add some javascript code to start-up `Makeup` loading some config from a JSON file:
+
+     <script type="text/javascript">
+        $.getJSON("/pages.json", function(data){
+           new Makeup('main', data.pages);
+        });
+     </script>
+
+
+### PAGES configuration
+
+Create a JSON file with some metadata about your pages
+
+    {
+        "pages": {
+            "/": {"title": "makeup", "src": "README.md"},
+
+            "/mypage2": {"title": "makeup - page2", "src": "/page2.html",
+                       "child": ["part1.md", "part2.md"]},
+
+            "__404__": {"title": "not found", "src": "/_404.html"}
+        }
+    }
+
+
+The key for `pages` is the URL _route_ used to access the page.
+Its values contains some data point to the location of the actual
+data in the file system.
+
+This example has only 3 pages:
+
+ * A root page `/` with content in markdown from `README.md`
+
+ * `mypage2` is composed of a HTML template "page.html" and content taken
+   from 2 files with markdown. The template defines placeholder for the markdown
+   content using an HTMl element with an ID. `<div id="part1"></div>` will
+   receive the content from the file `part1.md`
+
+ * `__404__` is a special page that will be used when a URL is not in `pages.json`
+
+
+### content files
+
+Content can written in plain HTMl or in markdown. Markdown will be processed
+by in the javascript library [markdown-js](https://github.com/evilstreak/markdown-js).
+
+By default `makeup` will guess the type looking at the file extension,
+but it can be explicitly set.
+
+
+### server configuration
+
+A `makeup` up site is composed only of static files.
+But it does not have a mapping one-to-one for URL's and files.
+
+The URL mapping is handling on client-side by javascript.
+The server needs to be configured to serve `index.html` for whatever
+URL that does not match a file.
+
+For example in `nginx` we have:
+
+    server {
+    	#listen   80; ## listen for ipv4; this line is default and implied
+
+    	root /home/eduardo/work/makeup-site;
+    	index index.html index.htm;
+
+    	# Make site accessible from http://localhost/
+    	server_name localhost;
+
+    	location / {
+    		# First attempt to serve request as file, then
+    		# fall back to index.html
+    		try_files $uri /index.html;
+    	}
+    }
+
+
+### page routing
+
+When a page is accessed the first time in a session.
+It will always get the `index.html` for whatever URL.
+
+On page load during `makeup` initialization it will:
+
+ * look into the current URL location
+ * find the matching page accoridng to `pages.json`
+ * send an AJAX request to fetch the content
+ * after receivng the content, apply a filter if any (convert markdown to HTML)
+ * insert HTML into page DOM
+
+`makeup` will also handle every click to a link (`a`).
+Instead of just sending an HTTP to the given `href` it will
+try to match the URL to given route and send a request to retrieve
+only the content part.
+
+It than manipulates the browser history to give the user the impression
+that he navigated to a different page.
+
+
+Example
 -----------
 
-* no "build" step
-* convert markdown to HTML (can be extended to support other formats)
-* multiple content source files in a single page
+If you are reading this at [makeup.schettino72.net](http://makeup.schettino72.net)
+you can check the source for this page :)
 
+The full source can be found on the [github repo](https://github.com/schettino72/makeup/tree/gh-pages).
+
+On the top it contains a menu so you can see it action...
 
 
 Drawbacks
 ------------
 
-* the whole site will use a single URL where different pages are accessible
-  through URL hashes (like http://example.com#/path/to/page)
-* the content is loaded by ajax (can not be crawled by search engines)
-* an "index" with info of all pages must be loaded on page view
-  (so not suitable for very large websites)
+By default, the content is loaded by ajax (so can not be crawled by search engines) - see roadmap below for possible solutions.
 
 
-How to use it
----------------
+Roadmap
+----------
 
-For a sample check a _makeup_ website <http://schettino72.github.com/makeup> source
-<https://github.com/schettino72/makeup/tree/gh-pages>
+* offline generation of HTML (make it crawlable using a static server)
+* server-side implementation (make it crawlable using a dynamic server)
+* support mustache templates
+* web UI to edit pages
+
+
+Usage
+-------
 
 Makeup is based on the idea that the pages in your website are divided in
 **sections**. Each page contains one or more section, and each section
@@ -43,7 +182,7 @@ the position where the sections should be inserted.
 
 Each section contains the folowing attributes attributes:
 
-* src (string) -> the url to load the section content
+* src (string) -> the path to load the section content
 * pos (string) -> the _id_ of the HTML element where the section will be inserted
 * processor (function) -> function that performs some kind on transformation
                           on the content (i.e. convert markdown to HTML)
@@ -52,43 +191,55 @@ Each section contains the folowing attributes attributes:
                     _title_ of the HTML document.
 
 
-1) Create a base HTML template where you include jQuery, and makeup.js
-
-2) Create an instance of Makeup, it takes 2 parameters:
+Create an instance of Makeup, it takes 2 parameters:
    * _pos_ (string), to be used as _section.pos_ for all pages.
-   * _pages_ (plain object) where the key is the path location of the page
-     and the value is a _section_.
+   * _pages_ (plain object) where: the key is the path location of the page,
+     the value is a _section_.
 
 
-3) By default the _processor_ is guessed based on the _src_ name.
-   If the file extensions ends with a ".md" the markdown processor will be used.
-   Use the _processor_ value `null` to indicate no processing should be done.
+By default the _processor_ is guessed based on the _src_ name.
+If the file extensions ends with a ".md" the markdown processor will be used.
+Use the _processor_ value `null` to indicate no processing should be done.
 
-4) If the _pos_ of a child section has the same name as the _src_ you can
-   describe it by a single string:
+If the _pos_ of a child section has the same name as the _src_ you can
+describe it by a single string:
 
     child: [{src: 'my_section.md', pos: 'my_section'}]
     // could be written as
     child: ['my_section.md']
 
 
-5) You can add your own processor by registering it. For example the built-in
-   markdown processor is resgistred like this:
+You can add your own processor by registering it. For example the built-in
+markdown processor is resgistred like this:
 
    Makeup.PROCESSOR_MAP['md'] = function(data) { return markdown.toHTML(data);};
 
 
 
-Accessing the site from file system
-------------------------------------
+development server
+--------------------
 
-Makeup load the pages through ajax, browsers will usually block
-ajax requests to file system as a security measure.
-So to test the site locally you should serve the files from
-a web server.
+To test the site locally you should serve the files from
+a web server. Remeber that you need some special configuration
+as explained in the _server configuration_ section above.
 
-If you have python installed you can just run the command below from
-the root folder:
+If you have python installed you can just the provided
+[server.py](https://github.com/schettino72/makeup/blob/master/serve.py).
+It has no external dependencies, just puth the script in the root of your site
+and eecute the command:
 
-    $ python -m SimpleHTTPServer
+    $ python serve.py
 
+
+
+FAQ
+-------
+
+Can I serve a `makeup` site on [github pages](http://pages.github.com/)?
+
+Yes. But it has 2 caveats. First, you need to serve the site on your doamin.
+Second, github-pages has no support for something like nginx `try_files`...
+the tricky is to use the `404.html` to serve `index.html`.
+It works, but the browser will get a `404` as HTTP response
+if the first page accessed is not _index.html_.
+Actually this site is being hosted on github-pages :)

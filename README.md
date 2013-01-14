@@ -14,7 +14,7 @@ Goals
     - write content in markdown
 
 * better than conventional static site generators
-    - minimal setup, no installation (easy for non-techinical people)
+    - minimal setup, no installation (easy for non-technical people)
     - easy to use, no template language required just plain HTML is enough
     - [TODO] optional use of templates
     - [TODO] optional offline content generation
@@ -28,7 +28,7 @@ Goals
 How it works
 ---------------
 
-### HTML template
+#### HTML template
 
 Create a basic HTML "template" file where you must include
 [jquery.js](http://jquery.com/),
@@ -43,7 +43,7 @@ Add an element to be the placeholder for the content:
 
      <div id="main"></div>
 
-Add some javascript code to start-up `Makeup` loading some config from a JSON file:
+Add some javascript code to start-up _makeup_ loading some config from a JSON file:
 
      <script type="text/javascript">
         $.getJSON("/pages.json", function(data){
@@ -52,7 +52,7 @@ Add some javascript code to start-up `Makeup` loading some config from a JSON fi
      </script>
 
 
-### PAGES configuration
+#### PAGES configuration
 
 Create a JSON file with some metadata about your pages
 
@@ -84,18 +84,18 @@ This example has only 3 pages:
  * `__404__` is a special page that will be used when a URL is not in `pages.json`
 
 
-### content files
+#### content files
 
 Content can written in plain HTMl or in markdown. Markdown will be processed
 by in the javascript library [markdown-js](https://github.com/evilstreak/markdown-js).
 
-By default `makeup` will guess the type looking at the file extension,
+By default _makeup_ will guess the type looking at the file extension,
 but it can be explicitly set.
 
 
-### server configuration
+#### server configuration
 
-A `makeup` up site is composed only of static files.
+A _makeup_ up site is composed only of static files.
 But it does not have a mapping one-to-one for URL's and files.
 
 The URL mapping is handling on client-side by javascript.
@@ -107,7 +107,7 @@ For example in `nginx` we have:
     server {
     	#listen   80; ## listen for ipv4; this line is default and implied
 
-    	root /home/eduardo/work/makeup-site;
+    	root /path/to/your/site;
     	index index.html index.htm;
 
     	# Make site accessible from http://localhost/
@@ -121,20 +121,20 @@ For example in `nginx` we have:
     }
 
 
-### page routing
+#### page routing
 
 When a page is accessed the first time in a session.
 It will always get the `index.html` for whatever URL.
 
-On page load during `makeup` initialization it will:
+On page load during _makeup_ initialization it will:
 
  * look into the current URL location
- * find the matching page accoridng to `pages.json`
+ * find the matching page according to `pages.json`
  * send an AJAX request to fetch the content
- * after receivng the content, apply a filter if any (convert markdown to HTML)
+ * after receiving the content, apply a filter if any (convert markdown to HTML)
  * insert HTML into page DOM
 
-`makeup` will also handle every click to a link (`a`).
+_makeup_ will also handle every click to a link (`a`).
 Instead of just sending an HTTP to the given `href` it will
 try to match the URL to given route and send a request to retrieve
 only the content part.
@@ -151,7 +151,7 @@ you can check the source for this page :)
 
 The full source can be found on the [github repo](https://github.com/schettino72/makeup/tree/gh-pages).
 
-On the top it contains a menu so you can see it action...
+On the [top](#menu) it contains a menu so you can see it action...
 
 
 Drawbacks
@@ -172,15 +172,15 @@ Roadmap
 Usage
 -------
 
-Makeup is based on the idea that the pages in your website are divided in
+_Makeup_ is based on the idea that the pages in your website are divided in
 **sections**. Each page contains one or more section, and each section
 might contain other sections.
 
-Makeup does not use any type of template system. Sections are inserted
+_Makeup_ does not use any type of template system. Sections are inserted
 into a HTML document using the _id_ of HTML elements as a reference to
 the position where the sections should be inserted.
 
-Each section contains the folowing attributes attributes:
+Each section contains the following attributes attributes:
 
 * src (string) -> the path to load the section content
 * pos (string) -> the _id_ of the HTML element where the section will be inserted
@@ -191,7 +191,8 @@ Each section contains the folowing attributes attributes:
                     _title_ of the HTML document.
 
 
-Create an instance of Makeup, it takes 2 parameters:
+Create an instance of `Makeup`, it takes 2 parameters:
+
    * _pos_ (string), to be used as _section.pos_ for all pages.
    * _pages_ (plain object) where: the key is the path location of the page,
      the value is a _section_.
@@ -210,7 +211,7 @@ describe it by a single string:
 
 
 You can add your own processor by registering it. For example the built-in
-markdown processor is resgistred like this:
+markdown processor is registered like this:
 
    Makeup.PROCESSOR_MAP['md'] = function(data) { return markdown.toHTML(data);};
 
@@ -220,13 +221,13 @@ development server
 --------------------
 
 To test the site locally you should serve the files from
-a web server. Remeber that you need some special configuration
+a web server. Remember that you need some special configuration
 as explained in the _server configuration_ section above.
 
 If you have python installed you can just the provided
 [server.py](https://github.com/schettino72/makeup/blob/master/serve.py).
-It has no external dependencies, just puth the script in the root of your site
-and eecute the command:
+It has no external dependencies, just put the script in the root of your site
+and execute the command:
 
     $ python serve.py
 
@@ -235,9 +236,9 @@ and eecute the command:
 FAQ
 -------
 
-Can I serve a `makeup` site on [github pages](http://pages.github.com/)?
+Can I serve a _makeup_ site on [github pages](http://pages.github.com/)?
 
-Yes. But it has 2 caveats. First, you need to serve the site on your doamin.
+Yes. But it has 2 caveats. First, you need to serve the site on your domain.
 Second, github-pages has no support for something like nginx `try_files`...
 the tricky is to use the `404.html` to serve `index.html`.
 It works, but the browser will get a `404` as HTTP response

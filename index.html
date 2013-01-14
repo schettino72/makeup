@@ -4,27 +4,58 @@
   <meta charset="utf-8" />
   <title>makeup - client-side static site generator/transformer</title>
 
+  <link href="/foundation.css" rel="stylesheet" type="text/css" />
   <style type="text/css">
+    body {
+        background-color: #efcbbd;
+        font-family: 'PT Serif', Georgia;
+    }
+    .row {
+        background-color: #f8eff0;
+        border-left: 1px solid #dc1d2f;
+        border-right: 1px solid #dc1d2f;
+        border-bottom: 1px solid #dc1d2f;
+        padding-left: 20px;
+        margin-bottom: 30px;
+    }
+    ul {
+        margin-left: 30px;
+    }
+    pre {
+        padding: 5px;
+        margin-bottom: 20px;
+        background-color: #c89a83;
+    }
+    pre code {
+        background-color: inherit;
+    }
+    h1, h2, h3, h4, h5 {color: #dc1d2f}
+    p {margin-bottom: 15px;}
     nav { margin: 20px;}
     nav a {
         font-size: big;
         padding: 10px;
-        background-color: #777;
-        color:white;
+        background-color: #dc1d2f;
+        color: #5b3a27;
         text-decoration:none;
         font-weight: bold;
+        margin-right: 20px;
+    }
+    nav a:hover {
+        color: #201f1a;
     }
   </style>
 </head>
 
 <body>
-  <nav>
+ <div class="row"><div class="twelve columns">
+  <nav id="menu">
     <a href="/">home/doc</a>
     <a href="/mypage2">sample page</a>
     <a href="/i_dont_exist">wrong link(to test 404 page)</a>
   </nav>
   <div id="main"></div>
-
+</div></div>
 
   <script src="/js/jquery.min.js"></script>
   <script src="/js/markdown.js" ></script>

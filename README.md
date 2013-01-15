@@ -4,7 +4,7 @@ Makeup
 _Makeup_ is a static site generator / transformer that (may) run completely on client side.
 
 That means there is no "build" step required before you deploy your
-website files. And of course there is nothing to be installed.
+website files. And of course there is nothing to be installed (but a webserver).
 
 Goals
 ------------
@@ -13,10 +13,10 @@ Goals
     - use "HTML template" page for common content shared by pages
     - write content in markdown
 
-* better than conventional static site generators
+* better than conventional (server-side) static site generators
     - minimal setup, no installation (easy for non-technical people)
     - easy to use, no template language required just plain HTML is enough
-    - [TODO] optional use of templates
+    - [TODO] optional use of template language (mustache)
     - [TODO] optional offline content generation
 
 * better than dynamic sites
@@ -243,4 +243,4 @@ Second, github-pages has no support for something like nginx `try_files`...
 the tricky is to use the `404.html` to serve `index.html`.
 It works, but the browser will get a `404` as HTTP response
 if the first page accessed is not _index.html_.
-Actually this site is being hosted on github-pages :)
+Actually this [site](http://makeup.schettino72.net) is being hosted on github-pages :)
